@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useState } from 'react'
 
 const HELX_SEARCH_URL = `https://helx.renci.org/search`
 
-const defaultConfig = {
+const DEFAULT_OPTIONS = {
   index: 'concepts_index',
   size: 10,
   offset: 0,
@@ -16,21 +16,26 @@ export const useHelxSearch = config => {
   const [hits, setHits] = useState([])
   const [total, setTotal] = useState(0)
   const [error, setError] = useState()
+  const [pageCount, setPageCount] = useState(0)
 
-  const doSearch = async (query) => {
+
+  const doSearch = async (query, options) => {
     setLoading(true)
+
+    const size = options.perPage || DEFAULT_OPTIONS.size
+    const offset = (options.page - 1) * options.perPage || DEFAULT_OPTIONS.size
     
     const trimmedQuery = query.trim()
-
     if (trimmedQuery === '') { return }
 
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        query: trimmedQuery,
-        ...defaultConfig,
         ...config,
+        query: trimmedQuery,
+        size,
+        offset,
       }),
     }
     console.log(requestOptions)
@@ -46,6 +51,8 @@ export const useHelxSearch = config => {
 
       setHits(result.result.hits.hits.map(r => r._source))
       setTotal(result.result.total_items)
+      setPageCount(Math.ceil(result.result.total_items / size))
+    
       console.log(result.result.total_items)
     } catch (error) {
       console.log(error)
@@ -54,7 +61,7 @@ export const useHelxSearch = config => {
     setLoading(false)
   }
   
-  return { doSearch, hits, total }
+  return { doSearch, hits, loading, pageCount, total }
 }
 
 

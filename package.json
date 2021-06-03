@@ -1,10 +1,10 @@
 {
-  "name": "helx-search",
-  "version": "0.1.0",
+  "name": "@renci/helx-react-search",
+  "version": "0.1.1",
   "description": "Made with create-react-library",
   "author": "mbwatson",
   "license": "MIT",
-  "repository": "mbwatson/helx-search",
+  "repository": "mbwatson/helx-react-search",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.js",
